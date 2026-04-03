@@ -1,0 +1,19 @@
+发送端上位机开始运行.  2026_04_02_14_45_35
+
+
+本地图片路径有效
+ [PathUtils] 绝对路径d:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tool\globals\data\local\pics下找到3个png类型文件
+本地图片列表: ['img1_close.png', 'img2_max.png', 'img3_min.png']
+ SetLocalPicNameList成功：共3个图片名称
+WarnShak
+switchpage
+Traceback (most recent call last):
+  File "d:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\main.py", line 1009, in <module>
+    window = MainWindow( WinIconFilePath, WinTitle)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\main.py", line 113, in __init__
+    self.modeinit()
+  File "d:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\main.py", line 202, in modeinit
+    self.DefSgnals.UserSwitchMedia.connect(self.on_user_switch_media)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'on_user_switch_media'

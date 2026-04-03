@@ -1,0 +1,17 @@
+发送端：
+1、低速按键
+QPushButton {
+    color: #ffffff;
+    image: url(:/midL/image/button_di.png);
+    background-size: cover;
+    border: none;  /* 初始状态无边框 */
+    border-radius: 6px;  /* 根据需要设置圆角边框 */
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.2);  /* 点击时添加背景颜色 */
+}
+
+QPushButton:pressed {
+    padding-top: 9px;  /* 点击时修改填充 */
+}

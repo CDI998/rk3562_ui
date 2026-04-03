@@ -1,0 +1,65 @@
+<RCC>
+  <qresource prefix="bg">
+    <file>image/bg_m.svg</file>
+    <file>image/cameinit.svg</file>
+    <file>image/bottom2.svg</file>
+    <file>image/bg_m.svg</file>
+    <file>image/bg_instructions.svg</file>
+    <file>image/logo.svg</file>
+    <file>image/bg_send.svg</file>
+    <file>image/rtgb.svg</file>
+    <file>image/ico_setting.svg</file>
+  </qresource>
+  <qresource prefix="applogo">
+    <file>image/applogo_recv.svg</file>
+    <file>image/applogo_send.svg</file>
+  </qresource>
+  <qresource prefix="winctrl">
+    <file>image/winctrl/min.svg</file>
+    <file>image/winctrl/close.svg</file>
+  </qresource>
+  <qresource prefix="tip">
+    <file>image/tip/zhong_p_c_Error.svg</file>
+    <file>image/tip/zhong_p_c_EU.svg</file>
+    <file>image/tip/zhong_p_c_ing.svg</file>
+    <file>image/tip/zhong_p_c_ok.svg</file>
+    <file>image/tip/zhong_p_c_UnUse.svg</file>
+    <file>image/tip/di_p_b_r.svg</file>
+    <file>image/tip/di_p_a_r.svg</file>
+    <file>image/tip/gao_p_b.svg</file>
+    <file>image/tip/zhong_p_a.svg</file>
+    <file>image/tip/gao_p_c.svg</file>
+  </qresource>
+  <qresource prefix="txtbox">
+    <file>image/txt/低速输入框.svg</file>
+  </qresource>
+  <qresource prefix="step">
+    <file>image/step/smilingface.png</file>
+    <file>image/step/midstepnew1.svg</file>
+    <file>image/step/midstepnew2.svg</file>
+    <file>image/step/空步骤.png</file>
+    <file>image/step/midstepnew3.svg</file>
+    <file>image/step/higstep1.svg</file>
+    <file>image/step/higstep2.svg</file>
+    <file>image/step/lowstep1.svg</file>
+    <file>image/step/lowstep2.svg</file>
+  </qresource>
+  <qresource prefix="midL">
+    <file>image/btn/lowbtnEnable.svg</file>
+    <file>image/btn/lowbtnUnEnable.svg</file>
+    <file>image/btn/midbtnEnable.svg</file>
+    <file>image/btn/midbtnUnEnable.svg</file>
+    <file>image/btn/higbtnEnable.svg</file>
+    <file>image/btn/higbtnUnEnable.svg</file>
+  </qresource>
+  <qresource prefix="btn">
+    <file>image/btn/摄像头连接中.svg</file>
+    <file>image/btn/ico_startG.svg</file>
+    <file>image/btn/ico_startR.svg</file>
+    <file>image/btn/ico_startW.svg</file>
+    <file>image/btn/ico_startY.svg</file>
+    <file>image/btn/zhong_bt_pz.svg</file>
+    <file>image/btn/低速2取消.svg</file>
+    <file>image/btn/低速确定按钮.svg</file>
+  </qresource>
+</RCC>
