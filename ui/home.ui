@@ -416,7 +416,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="lowbtn">
+           <widget class="QPushButton" name="txtmodebtn">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -486,7 +486,7 @@ QPushButton:pressed {
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="midbtn">
+           <widget class="QPushButton" name="picmodebtn">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -536,7 +536,7 @@ QPushButton:pressed {
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="higbtn">
+           <widget class="QPushButton" name="vdomodebtn">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -611,9 +611,9 @@ border-image: url(:/bg/image/bg_m.svg);
 }</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
-         <widget class="QWidget" name="lowpage">
+         <widget class="QWidget" name="txtmodepage">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -637,7 +637,7 @@ border-image: url(:/bg/image/bg_m.svg);
             <number>0</number>
            </property>
            <item>
-            <widget class="QStackedWidget" name="lowpage_2">
+            <widget class="QStackedWidget" name="txtpage">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -656,7 +656,7 @@ border-image: url(:/bg/image/bg_m.svg);
                <height>622</height>
               </size>
              </property>
-             <widget class="QWidget" name="lowstep1">
+             <widget class="QWidget" name="txtpage1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -772,7 +772,7 @@ QLabel {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QSlider" name="low1set">
+                      <widget class="QSlider" name="txtprogress">
                        <property name="focusPolicy">
                         <enum>Qt::NoFocus</enum>
                        </property>
@@ -948,7 +948,7 @@ QSlider::handle:horizontal {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_3">
+                      <widget class="QLabel" name="txtprogresstip">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -1080,7 +1080,7 @@ QSlider::handle:horizontal {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="low1inputedit">
+                   <widget class="QLineEdit" name="inputedit">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -1649,7 +1649,7 @@ QPushButton:pressed {
                    </widget>
                   </item>
                   <item row="3" column="8">
-                   <widget class="QPushButton" name="kb_enter">
+                   <widget class="QPushButton" name="kb_send">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -1696,7 +1696,7 @@ QPushButton:pressed {
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="midpage">
+         <widget class="QWidget" name="picmodepage">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -1720,7 +1720,7 @@ QPushButton:pressed {
             <number>0</number>
            </property>
            <item>
-            <widget class="QStackedWidget" name="midpage_2">
+            <widget class="QStackedWidget" name="picpage">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -1739,7 +1739,7 @@ QPushButton:pressed {
                <height>622</height>
               </size>
              </property>
-             <widget class="QWidget" name="midstep1">
+             <widget class="QWidget" name="picpage1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1855,7 +1855,7 @@ QLabel {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QSlider" name="low1set_2">
+                      <widget class="QSlider" name="picprogress">
                        <property name="focusPolicy">
                         <enum>Qt::NoFocus</enum>
                        </property>
@@ -2031,7 +2031,7 @@ QSlider::handle:horizontal {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_6">
+                      <widget class="QLabel" name="picprogresstip">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -2173,7 +2173,7 @@ QSlider::handle:horizontal {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="mid1pic">
+                   <widget class="QLabel" name="localpic">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -2202,7 +2202,7 @@ QSlider::handle:horizontal {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QFrame" name="mid1camframe">
+                   <widget class="QFrame" name="piccamframe">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -2218,7 +2218,7 @@ QSlider::handle:horizontal {
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
-                    <widget class="QLabel" name="mid1cam">
+                    <widget class="QLabel" name="piccam">
                      <property name="geometry">
                       <rect>
                        <x>0</x>
@@ -2398,7 +2398,7 @@ QPushButton:pressed {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="mid1send">
+                   <widget class="QPushButton" name="sendpic">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -2474,7 +2474,7 @@ QPushButton:pressed {
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="higpage">
+         <widget class="QWidget" name="vdomodepage">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -2498,7 +2498,7 @@ QPushButton:pressed {
             <number>0</number>
            </property>
            <item>
-            <widget class="QStackedWidget" name="higpage_2">
+            <widget class="QStackedWidget" name="vdopage">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -2517,7 +2517,7 @@ QPushButton:pressed {
                <height>622</height>
               </size>
              </property>
-             <widget class="QWidget" name="higstep1">
+             <widget class="QWidget" name="vdopage1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -2636,7 +2636,7 @@ QLabel {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QSlider" name="low1set_3">
+                      <widget class="QSlider" name="vdoprogress">
                        <property name="focusPolicy">
                         <enum>Qt::NoFocus</enum>
                        </property>
@@ -2812,7 +2812,7 @@ QSlider::handle:horizontal {
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_9">
+                      <widget class="QLabel" name="vdoprogresstip">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -2954,7 +2954,7 @@ QSlider::handle:horizontal {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="hig1vdo">
+                   <widget class="QLabel" name="localvdo">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -2983,7 +2983,7 @@ QSlider::handle:horizontal {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QFrame" name="hig1camframe">
+                   <widget class="QFrame" name="vdocamframe">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -2999,7 +2999,7 @@ QSlider::handle:horizontal {
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
-                    <widget class="QLabel" name="hig1cam">
+                    <widget class="QLabel" name="vdocam">
                      <property name="geometry">
                       <rect>
                        <x>0</x>
@@ -3178,7 +3178,7 @@ QPushButton:pressed {
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="hig1send">
+                   <widget class="QPushButton" name="sendvdo">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>

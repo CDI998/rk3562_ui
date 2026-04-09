@@ -1,0 +1,11 @@
+发送端上位机开始运行.  2026_04_08_18_47_48
+
+
+本地图片路径有效
+ [PathUtils] 绝对路径d:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tool\globals\data\local\pics下找到3个png类型文件
+本地图片列表: ['img1_close.png', 'img2_max.png', 'img3_min.png']
+WarnShak
+switchpage
+mid mode
+switchpage
+close_window

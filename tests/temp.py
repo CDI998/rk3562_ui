@@ -1,96 +1,107 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QHBoxLayout
-from PyQt5.QtCore import Qt, QPoint
+import cv2
+import os
+import numpy as np
 
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("所有组件上下滑动共用一个槽函数")
-        self.setFixedSize(800, 500)
+# ==============================
+# 1. 图片切块函数（你要求的格式）
+# ==============================
+def split_jpeg_to_blocks(image_path: str, x_blocks: int, y_blocks: int):
+    x_blocks = max(1, min(x_blocks, 10))
+    y_blocks = max(1, min(y_blocks, 10))
+    img = cv2.imread(image_path)
+    h, w = img.shape[:2]
+    block_w = w // x_blocks
+    block_h = h // y_blocks
+    result = []
 
-        # ========== 1. 初始化你的组件（和你现有结构一致） ==========
-        self.midtxts = {}
-        self.higtxts = {}
-        
-        # 组件1：step1pic
-        self.mid1pic = QLabel("step1pic 组件\n（上下滑动我）")
-        self.mid1pic.setFixedSize(350, 400)
-        self.mid1pic.setStyleSheet("border:2px solid green; background:#e8f5e9;")
-        self.mid1pic.setAlignment(Qt.AlignCenter)
-        self.midtxts['step1pic'] = self.mid1pic
-        
-        # 组件2：step1vdo
-        self.hig1vdo = QLabel("step1vdo 组件\n（上下滑动我）")
-        self.hig1vdo.setFixedSize(350, 400)
-        self.hig1vdo.setStyleSheet("border:2px solid blue; background:#e3f2fd;")
-        self.hig1vdo.setAlignment(Qt.AlignCenter)
-        self.higtxts['step1vdo'] = self.hig1vdo
+    for y in range(y_blocks):
+        row_start_id = y * 10
+        for x in range(x_blocks):
+            current_id = row_start_id + x
+            x1 = x * block_w
+            y1 = y * block_h
+            x2 = x1 + block_w
+            y2 = y1 + block_h
+            block = img[y1:y2, x1:x2]
+            _, encoded = cv2.imencode(".jpg", block)
+            result.append({"id": current_id, "data": encoded.tobytes()})
+    return result
 
-        # ========== 2. 滑动配置 ==========
-        self.slide_threshold = 30  # 滑动触发阈值
-        self.slide_start_y = 0     # 通用滑动起点Y轴
-        self.current_widget = None # 记录当前滑动的组件
 
-        # ========== 3. 绑定所有组件的滑动事件到通用处理函数 ==========
-        # step1pic绑定
-        self.midtxts['step1pic'].mousePressEvent = lambda e: self.on_widget_press(e, 'step1pic')
-        self.midtxts['step1pic'].mouseReleaseEvent = self.on_widget_release
-        
-        # step1vdo绑定
-        self.higtxts['step1vdo'].mousePressEvent = lambda e: self.on_widget_press(e, 'step1vdo')
-        self.higtxts['step1vdo'].mouseReleaseEvent = self.on_widget_release
+# ==============================
+# 2. 块贴回图片函数（你要的新函数）
+# ==============================
+def paste_block_to_image(
+    target_img: np.ndarray,
+    block: dict,
+    total_x_blocks: int,
+    total_y_blocks: int
+):
+    """
+    把一个块（id+data）贴到目标图片的正确位置
+    :param target_img: 目标图片（空白/原图）
+    :param block: {"id": 编号, "data": 二进制}
+    :param total_x_blocks: 总列数（切块时的x）
+    :param total_y_blocks: 总行数（切块时的y）
+    :return: 贴好的图片
+    """
+    block_id = block["id"]
+    data = block["data"]
 
-        # ========== 4. 布局 ==========
-        layout = QHBoxLayout()
-        layout.addWidget(self.mid1pic)
-        layout.addWidget(self.hig1vdo)
-        layout.setSpacing(50)
-        self.setLayout(layout)
+    # 解码图片块
+    block_data = np.frombuffer(data, dtype=np.uint8)
+    block_img = cv2.imdecode(block_data, cv2.IMREAD_COLOR)
 
-    # ========== 通用滑动按下事件（记录组件和起点） ==========
-    def on_widget_press(self, event, widget_name):
-        if event.button() == Qt.LeftButton:
-            self.current_widget = widget_name  # 记录当前滑动的组件名
-            self.slide_start_y = event.y()     # 记录Y轴起点
+    h, w = target_img.shape[:2]
+    block_w = w // total_x_blocks
+    block_h = h // total_y_blocks
 
-    # ========== 通用滑动释放事件（判断方向，调用共用槽函数） ==========
-    def on_widget_release(self, event):
-        if event.button() == Qt.LeftButton and self.current_widget:
-            y_offset = event.y() - self.slide_start_y
-            # 判断滑动方向并调用共用槽函数
-            if abs(y_offset) > self.slide_threshold:
-                slide_dir = "up" if y_offset < 0 else "down"
-                self.on_slide_common(self.current_widget, slide_dir)
-            # 重置当前组件
-            self.current_widget = None
+    # 计算坐标
+    y = block_id // 10        # 行 = 0,1,2,3,4...
+    x = block_id % 10         # 列 = 0~9
+    x1 = x * block_w
+    y1 = y * block_h
 
-    # ========== 所有组件共用的滑动槽函数（核心逻辑） ==========
-    def on_slide_common(self, widget_name, slide_dir):
-        """
-        共用槽函数
-        :param widget_name: 滑动的组件名（step1pic/step1vdo）
-        :param slide_dir: 滑动方向（up/down）
-        """
-        # ========== 你只需要在这里写业务逻辑 ==========
-        if widget_name == "step1pic":
-            if slide_dir == "up":
-                print(f"✅ {widget_name} 上滑 → 执行图片上滑逻辑（如切换图片）")
-                self.midtxts[widget_name].setText(f"{widget_name}\n上滑触发！")
-            else:
-                print(f"✅ {widget_name} 下滑 → 执行图片下滑逻辑（如缩小图片）")
-                self.midtxts[widget_name].setText(f"{widget_name}\n下滑触发！")
-        
-        elif widget_name == "step1vdo":
-            if slide_dir == "up":
-                print(f"✅ {widget_name} 上滑 → 执行视频上滑逻辑（如音量+）")
-                self.higtxts[widget_name].setText(f"{widget_name}\n上滑触发！")
-            else:
-                print(f"✅ {widget_name} 下滑 → 执行视频下滑逻辑（如音量-）")
-                self.higtxts[widget_name].setText(f"{widget_name}\n下滑触发！")
+    # 把块贴到目标图上
+    target_img[y1:y1+block_h, x1:x1+block_w] = block_img
 
-# 运行程序
+    return target_img
+
+
+# ==============================
+# 3. 测试函数（完整流程）
+# ==============================
+def test_merge_blocks():
+    # 路径
+    img_path = r"D:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tests\photo.jpg"
+    save_dir = r"D:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tests\testdata"
+    os.makedirs(save_dir, exist_ok=True)
+
+    # 配置
+    X = 5
+    Y = 5
+
+    # 1. 切块
+    blocks = split_jpeg_to_blocks(img_path, x_blocks=X, y_blocks=Y)
+
+    # 2. 读取原图获取尺寸，创建空白图
+    src = cv2.imread(img_path)
+    h, w = src.shape[:2]
+    blank_img = np.zeros((h, w, 3), dtype=np.uint8)  # 黑色空白图
+
+    # 3. 挑选两个块 【你可以随便改】
+    block1 = next(b for b in blocks if b["id"] == 0)
+    block2 = next(b for b in blocks if b["id"] == 11)
+
+    # 4. 贴上去
+    blank_img = paste_block_to_image(blank_img, block1, X, Y)
+    blank_img = paste_block_to_image(blank_img, block2, X, Y)
+
+    # 5. 保存结果
+    out_path = os.path.join(save_dir, "merged_result.jpg")
+    cv2.imwrite(out_path, blank_img)
+    print("✅ 拼接完成，保存到：", out_path)
+
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec_())
+    test_merge_blocks()

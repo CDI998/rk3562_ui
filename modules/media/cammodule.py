@@ -1,5 +1,5 @@
 import cv2
-
+from PyQt5.QtGui import QImage
 
 class CamModel:
     def __init__(self, device: str = "/dev/video11", width: int = 640, height: int = 480):
@@ -47,11 +47,59 @@ class CamModel:
         # 只有 capture handle 存在且打开时才认定为连接
         return bool(self.cap and self.cap.isOpened())
 
-    def getimg(self):
-        if not self.IsCamConned():
+    def GetRgbImg(self):
+        try:
+            # 1. 判断摄像头是否连接
+            if not self.IsCamConned():
+                return None
+            # 2. 尝试读取一帧（非阻塞）
+            try:
+                grabbed, frame = self.cap.read()
+            except Exception as e:
+                print(f"[摄像头] 读取帧异常: {e}")
+                return None
+            # 3. 没读到帧
+            if not grabbed or frame is None:
+                return None
+            # 4. 颜色空间转换（BGR → RGB）
+            try:
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            except Exception as e:
+                print(f"[摄像头] 格式转换异常: {e}")
+                return None
+            # 5. 最终返回正常帧
+            return rgb_frame
+        
+        # 最外层捕获所有未知异常，保证函数绝不崩溃
+        except Exception as e:
+            print(f"[摄像头] getimg 未知异常: {e}")
             return None
-        # 只尝试一次读取最新帧，避免阻塞
-        grabbed, frame = self.cap.read()
-        if grabbed and frame is not None:
-            return frame
-        return None
+
+
+    def RgbImg2QImage(self, frame):
+        """
+        把摄像头读取的 RGB frame 转换成 QImage
+        :param frame: RGB 格式的 numpy 数组（来自 getimg()）
+        :return: QImage / None
+        """
+        try:
+            # 空帧直接返回
+            if frame is None:
+                return None
+            # 获取图像尺寸
+            h, w, channel = frame.shape
+            bytes_per_line = channel * w
+            # 转换 RGB -> QImage
+            qimg = QImage(
+                frame.data,
+                w,
+                h,
+                bytes_per_line,
+                QImage.Format_RGB888
+            )
+            
+            return qimg
+        except Exception as e:
+            # 异常安全处理
+            print(f"[帧转QImage失败] {e}")
+            return None

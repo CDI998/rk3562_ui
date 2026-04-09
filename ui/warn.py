@@ -1,11 +1,10 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
-from PyQt5.QtCore import QPropertyAnimation, QSequentialAnimationGroup, QRect, Qt, QThread
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QPropertyAnimation, QSequentialAnimationGroup, QRect, Qt
 from threading import Thread
 import threading
 import queue
 from enum import Enum
-from tool.globals.queuetool import qeuetool
+from tool.globals.queuetool import QueueTool
 from PyQt5.QtCore import pyqtSignal as Signal
 
 class WarnType(Enum):
@@ -43,7 +42,6 @@ class WarnLabel(QLabel):
         # font-size: 25px;
         # 设置标签为圆角矩形
         self.setStyleSheet(self.DefStyle)
-        self.qeuetool = qeuetool()
         self.animation_group = QSequentialAnimationGroup()
         self.WarnShakInit()
         self.hide()
@@ -136,7 +134,7 @@ class WarnLabel(QLabel):
         if self.WarnThreadRuning == False:
             print("WarnMsg: WarnThreadRuning is False")
             return False
-        self.qeuetool.PutMsgQueue(q = self.WarnQueue, msg = (warntype, warntxt))
+        QueueTool.PutMsgQueue(q = self.WarnQueue, msg = (warntype, warntxt))
     
     def setFontSize(self, size):
         """设置字体大小"""
@@ -144,30 +142,3 @@ class WarnLabel(QLabel):
         font.setPointSize(size)
         self.setFont(font)
         self.txtsize = size
-# class MyWindow(QWidget):
-#     def __init__(self):
-#         super().__init__()
-
-#         # 初始化窗口
-#         self.setWindowTitle("Shaking Label Example")
-#         self.setGeometry(100, 100, 400, 200)
-
-#         # 实例化ShakingLabel类
-#         self.shaking_label = ShakingLabel("Initial Text", self)
-#         self.shaking_label.setGeometry(50, 50, 300, 50)
-
-#         # 创建按钮
-#         self.button = QPushButton("Click to Shake and Set Text", self)
-#         self.button.clicked.connect(self.on_button_click)
-#         self.shaking_label.WarnThreadRun()
-
-#     def on_button_click(self):
-#         # 设置标签文本并触发抖动效果
-#         print("on_button_click")
-#         self.shaking_label.WarnMsg(WarnType.ErrorWarnType_E, "Shaking Label Example")
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     window = MyWindow()
-#     window.show()
-#     sys.exit(app.exec_())
