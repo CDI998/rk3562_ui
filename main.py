@@ -194,14 +194,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Progress.init(self.Items_picmode['progress'], self.Items_picmode['progresstip']) 
         Progress.init(self.Items_vdomode['progress'], self.Items_vdomode['progresstip']) 
          # 初始化信息警告标签
-        self.Items_Def[WarnLabel] = WarnLabel("Initial Text", self.Items_Def['warnframe'])
-        self.Items_Def[WarnLabel].setObjectName("WarnLabel")  # 设置 QLabel 的名字
-
+        self.Items_Def['WarnLabel'] = WarnLabel("Initial Text", self.Items_Def['warnframe'])
+        self.Items_Def['WarnLabel'].setObjectName("WarnLabel")  # 设置 QLabel 的名字
+        self.Items_Def['WarnLabel'].setGeometry(11, 6, 186, 50)  # 设置 QLabel 的位置和大小
+        self.Items_Def['WarnLabel'].setFontSize(15)
+        
         self.SwitHomePage(SystemState.TXT_MODE)
         self.setWindowIcon(QIcon(self.WinIconFilePath))
         self.setWindowTitle(self.WinTitle)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 设置为无边框
-
            
     def modeinit(self):
         self.Items_Def['close_btn_test'].clicked.connect(self.close) # 关闭按钮,测试用
@@ -209,6 +210,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.Items_Def['txtmode'].clicked.connect(self.trigtxtmode) 
         self.Items_Def['picmode'].clicked.connect(self.trigpicmode) 
         self.Items_Def['vdomode'].clicked.connect(self.trigvdomode) 
+
+        self.Items_picmode['tookphoto'].clicked.connect(self.TookPhoto) 
+        self.Items_picmode['sendpic'].clicked.connect(self.SendPhoto) 
 
         # 2. 低速按键
         for group, keys in self.keyboards.items():
@@ -232,6 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.MediaSignals.TransProgress.connect(self.on_media_trans_progress)
         self.MediaSignals.CameRefrshSignal.connect(self.CameRefrsh)
+        self.DefSgnals.ShowWarnMsgSignal.connect(self.ShowWarnMsg)
 
 
     def remove_all_frame_borders(self):
@@ -313,26 +318,53 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(f"未知的媒体类型: {media_type}" + f" {tip}")
 
     def CameRefrsh(self, qimage:QImage):
-        if qimage == None:
-            print("no image")
+        if qimage is None:
+            print("[CameRefrsh] qimage is None")
             return False
 
-        if self.SysManage.sys_state == SystemState.PIC_MODE:
-                # 设置 QPixmap
-                pixmap = QPixmap.fromImage(qimage)
-                # 创建带有圆角的QPixmap
-                rounded_pixmap = self.createRoundedPixmap(pixmap, radius=20.0)
-                # 显示图像
-                self.Items_picmode['cam'].setScaledContents(True)
-                self.Items_picmode['cam'].setPixmap(rounded_pixmap.scaled(self.Items_picmode['camframe'].size(), Qt.IgnoreAspectRatio))
-        elif self.SysManage.sys_state == SystemState.VDO_MODE:
-                # 设置 QPixmap
-                pixmap = QPixmap.fromImage(qimage)
-                # 创建带有圆角的QPixmap
-                rounded_pixmap = self.createRoundedPixmap(pixmap, radius=20.0)
-                # 显示图像
-                self.Items_vdomode['cam'].setScaledContents(True)
-                self.Items_vdomode['cam'].setPixmap(rounded_pixmap.scaled(self.Items_vdomode['camframe'].size(), Qt.IgnoreAspectRatio))
+        if qimage.isNull():
+            print("[CameRefrsh] qimage is null")
+            return False
+
+        try:
+            pixmap = QPixmap.fromImage(qimage)
+            if pixmap.isNull():
+                print("[CameRefrsh] pixmap is null")
+                return False
+            rounded_pixmap = self.createRoundedPixmap(pixmap, radius=20.0)
+            if rounded_pixmap.isNull():
+                print("[CameRefrsh] rounded_pixmap is null")
+                return False
+
+            if self.SysManage.sys_state == SystemState.PIC_MODE:
+                    # 显示图像
+                    self.Items_picmode['cam'].setScaledContents(True)
+                    self.Items_picmode['cam'].setPixmap(
+                        rounded_pixmap.scaled(
+                            self.Items_picmode['camframe'].size(), 
+                            Qt.IgnoreAspectRatio
+                        )
+                    )
+            elif self.SysManage.sys_state == SystemState.VDO_MODE:
+                    # 显示图像
+                    self.Items_vdomode['cam'].setScaledContents(True)
+                    self.Items_vdomode['cam'].setPixmap(
+                        rounded_pixmap.scaled(
+                            self.Items_vdomode['camframe'].size(), 
+                            Qt.IgnoreAspectRatio
+                        )
+                    )
+            return True
+        except Exception as e:
+            print(f"[CameRefrsh] exception: {e}")
+            return False
+        
+    def ShowWarnMsg(self, Type:WarnType, msg:str)->bool:
+        if self.Items_Def['WarnLabel'] is None:
+            print("ShowWarnMsg warnlabel is none")
+            return False
+        else:
+            return self.Items_Def['WarnLabel'].WarnMsg(Type, msg)
 
 #############################################################################################
 ################################## 1. 通用核心功能函数实现 end #############################
@@ -427,25 +459,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 ################################## 中速模式核心功能函数实现 start #############################
 #############################################################################################
     def trigpicmode(self):
-        print("mid mode")
+        print("pic mode")
         # 已处于中模式
         if self.SysManage.sys_state == SystemState.PIC_MODE:
-            print("mid mode already")
+            print("pic mode already")
             return True
         self.media.OpenCamStream()
         self.SwitHomePage(SystemState.PIC_MODE)
 
     def TookPhoto(self)->bool:
         # MidModeStep1TakPto
-        mediastste = self.media.MediaState()
-        if self.media.CamIsConned() == False:
-            self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.DefWarnType_E, "正在连接摄像头")  # 发射信号，传递数据
-            print("media not Runnig")
-            return False
-        if self.media.TakePhoto() == False:
-            print("TookPhoto 拍照失败")
-            # 拍照失败
-            self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.ErrorWarnType_E, "未连接摄像头")  # 发射信号，传递数据
+        cur_text = self.Items_picmode['tookphoto'].text()
+        if cur_text == "拍照":
+            res = self.media.TookPhoto()
+            if res == False:
+                self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.DefWarnType_E, "正在连接摄像头")  # 发射信号，传递数据
+                return False
+            self.Items_picmode['tookphoto'].setText("重拍")
+        else:
+            self.media.OpenCamStream()
+            self.Items_picmode['tookphoto'].setText("拍照")
+        return True
+    
+    def SendPhoto(self)->bool:
+        print("SendPic mid step1 send photo")
         return True
     
 #############################################################################################

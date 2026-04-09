@@ -9,7 +9,10 @@ class PicDataBean:
     # 图片 接口
     # ---------------------
     def set_image_rgb(self, img_data):
-        self.image_rgb = img_data
+        if img_data is not None:
+            self.image_rgb = img_data.copy()
+        else:
+            self.image_rgb = None
 
     def get_image_rgb(self):
         return self.image_rgb

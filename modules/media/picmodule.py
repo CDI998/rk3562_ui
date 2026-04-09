@@ -153,30 +153,40 @@ class PicModule():
         :param total_y_blocks: 总行数
         :return: 贴好后的 RGB 图片
         """
-        block_id = block["id"]
-        data = block["data"]
+        try:
+            block_id = block["id"]
+            data = block["data"]
 
-        # 解码 jpeg 数据 → OpenCV 默认是 BGR
-        block_data = np.frombuffer(data, dtype=np.uint8)
-        block_bgr = cv2.imdecode(block_data, cv2.IMREAD_COLOR)
-        
-        # 👉 关键：转成 RGB 格式，和目标图一致
-        block_rgb = cv2.cvtColor(block_bgr, cv2.COLOR_BGR2RGB)
+            if data is None or len(data) == 0:
+                print("[PasteJpegBlock2RgbImg] empty jpeg block data")
+                return None
 
-        # 获取尺寸
-        h, w = target_rgb_img.shape[:2]
-        block_w = w // total_x_blocks
-        block_h = h // total_y_blocks
+            # 解码 jpeg 数据 → OpenCV 默认是 BGR
+            block_data = np.frombuffer(data, dtype=np.uint8).copy()
+            block_bgr = cv2.imdecode(block_data, cv2.IMREAD_COLOR)
+            if block_bgr is None:
+                print("[PasteJpegBlock2RgbImg] jpeg decode failed")
+                return None
+            
+            #  转成 RGB 格式，和目标图一致
+            block_rgb = cv2.cvtColor(block_bgr, cv2.COLOR_BGR2RGB)
 
-        # 计算坐标（你的规则：行=ID//10，列=ID%10）
-        y = block_id // 10
-        x = block_id % 10
-        x1 = x * block_w
-        y1 = y * block_h
+            # 获取尺寸
+            h, w = target_rgb_img.shape[:2]
+            block_w = w // total_x_blocks
+            block_h = h // total_y_blocks
 
-        # 粘贴块（RGB → RGB，完全匹配）
-        target_rgb_img[y1:y1+block_h, x1:x1+block_w] = block_rgb
+            # 计算坐标（你的规则：行=ID//10，列=ID%10）
+            y = block_id // 10
+            x = block_id % 10
+            x1 = x * block_w
+            y1 = y * block_h
 
-        return target_rgb_img
+            # 粘贴块（RGB → RGB，完全匹配）
+            target_rgb_img[y1:y1+block_h, x1:x1+block_w] = block_rgb
 
+            return target_rgb_img
+        except Exception as e:
+                print(f"[PasteJpegBlock2RgbImg] exception: {e}")
+                return None
                 

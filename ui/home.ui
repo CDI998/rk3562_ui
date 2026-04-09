@@ -111,7 +111,7 @@
         <height>0</height>
        </size>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="69,331,60,1000,0,500">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="69,331,60,1000,50,400">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -276,7 +276,7 @@
        <item>
         <widget class="QPushButton" name="closebtn">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>

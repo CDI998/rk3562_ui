@@ -2,6 +2,8 @@ import cv2
 from PyQt5.QtGui import QImage
 import platform
 from enum import Enum
+import time
+import os
 
 class PlatformType(Enum):
     UNKNOWN_TYPE = 1
@@ -17,10 +19,10 @@ class CamModel:
         self.cap = None
         # RK3562 专用 GStreamer 管道（动态宽高，NV12 格式）
         self.pipeline = (
-            f"v4l2src device={self.device} ! "
+            f"v4l2src device={self.device} !  "
             f"video/x-raw,format=NV12,width={self.width},height={self.height},framerate=30/1 ! "
-            "videoconvert ! "
-            "appsink"
+            "videoconvert ! video/x-raw,format=BGR ! "
+            "appsink sync=false"
         )
         self.platform = self.get_current_platform()
 
@@ -37,6 +39,7 @@ class CamModel:
     def opencam(self) -> bool:
         # 打开前先释放之前的摄像头资源，防止 opencam 挂起
         self.closecam()
+        time.sleep(0.1)  # 短暂等待确保资源释放完成
         try:
             if self.platform == PlatformType.LINUX_TYPE:
                 cap = cv2.VideoCapture(self.pipeline, cv2.CAP_GSTREAMER)
@@ -50,19 +53,18 @@ class CamModel:
                 cap.release()
             self.cap = None
             return False
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         self.cap = cap
         return True
 
     def closecam(self):
+        print("[摄像头] 释放资源中...")
         # 无论何时都可以安全关闭，防止 closecam 挂起
         if self.cap:
             try:
                 self.cap.release()
             except Exception:
                 pass
+        time.sleep(0.3)
         self.cap = None
 
     def IsCamConned(self) -> bool:
@@ -85,12 +87,7 @@ class CamModel:
                 return None
             # 4. 颜色空间转换（BGR → RGB）
             try:
-                if self.platform == PlatformType.WINDOWS_TYPE:
-                    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                elif self.platform == PlatformType.LINUX_TYPE:
-                    rgb_frame = frame
-                else:
-                    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             except Exception as e:
                 print(f"[摄像头] 格式转换异常: {e}")
@@ -115,18 +112,18 @@ class CamModel:
             if frame is None:
                 return None
             # 获取图像尺寸
-            h, w, channel = frame.shape
-            bytes_per_line = channel * w
+            h, w, ch = frame.shape
+            stride = frame.strides[0]
             # 转换 RGB -> QImage
             qimg = QImage(
                 frame.data,
                 w,
                 h,
-                bytes_per_line,
+                stride,
                 QImage.Format_RGB888
-            ).copy()
+            )
             
-            return qimg
+            return qimg.copy()
         except Exception as e:
             # 异常安全处理
             print(f"[帧转QImage失败] {e}")

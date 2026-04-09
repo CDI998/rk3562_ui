@@ -1,79 +1,74 @@
+import sys
 import cv2
-import os
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtCore import QTimer, Qt
 
-def split_jpeg_to_blocks(image_path: str, x_blocks: int, y_blocks: int):
-    """
-    将 JPEG 切割成 x*y 块，返回 编号+图片二进制数据
-    行ID规则：第1行=0，第2行=10，第3行=20 ... 最大10行
-    每行最多10块，最多10行
-    返回：列表 [ {"id": 编号, "data": 图片编码数据}, ... ]
-    """
-    # 安全限制
-    x_blocks = max(1, min(x_blocks, 10))
-    y_blocks = max(1, min(y_blocks, 10))
+class CameraTestWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("RK3562 摄像头测试")
+        self.setFixedSize(640, 480)
 
-    # 读取原图
-    img = cv2.imread(image_path)
-    if img is None:
-        raise ValueError(f"无法读取图片：{image_path}")
+        # 界面
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignCenter)
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+        self.setLayout(layout)
 
-    h, w = img.shape[:2]
-    block_w = w // x_blocks
-    block_h = h // y_blocks
+        # 摄像头
+        self.cap = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        
+        # 打开摄像头
+        self.open_camera()
+        self.timer.start(30)
 
-    result = []
+    def open_camera(self):
+        """ ✅ RK3562 唯一能稳定出图的方式：V4L2 + 手动设置 NV12 格式 """
+        if self.cap is not None:
+            self.cap.release()
+            cv2.destroyAllWindows()
 
-    # 切割
-    for y in range(y_blocks):
-        # 行起始ID：0,10,20,30...
-        row_start_id = y * 10
+        # 核心：必须用 V4L2
+        self.cap = cv2.VideoCapture("/dev/video11", cv2.CAP_V4L2)
 
-        for x in range(x_blocks):
-            current_id = row_start_id + x
+        # RK3562 摄像头强制格式：NV12
+        self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'NV12'))
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        self.cap.set(cv2.CAP_PROP_FPS, 30)
 
-            # 裁剪坐标
-            x1 = x * block_w
-            y1 = y * block_h
-            x2 = x1 + block_w
-            y2 = y1 + block_h
+        print("摄像头打开成功:", self.cap.isOpened())
 
-            # 裁剪块
-            block = img[y1:y2, x1:x2]
+    def update_frame(self):
+        if not self.cap or not self.cap.isOpened():
+            return
 
-            # 编码为 JPG 二进制
-            _, encoded = cv2.imencode(".jpg", block)
-            block_data = encoded.tobytes()
+        ret, frame = self.cap.read()
+        if not ret:
+            return
 
-            result.append({
-                "id": current_id,
-                "data": block_data
-            })
+        # NV12 转 RGB（RK3562 必须这样转）
+        rgb = cv2.cvtColor(frame, cv2.COLOR_YUV2RGB_NV12)
 
-    return result
+        # 转 Qt 图像（用 stride 保证不花屏、不空白）
+        h, w, ch = rgb.shape
+        qimg = QImage(rgb.data, w, h, rgb.strides[0], QImage.Format_RGB888)
 
+        self.label.setPixmap(QPixmap.fromImage(qimg))
 
-# ------------------------------
-# 测试代码（5×5 切割 + 按ID保存）
-# ------------------------------
+    def closeEvent(self, event):
+        print("关闭摄像头")
+        if self.cap:
+            self.cap.release()
+        self.timer.stop()
+        event.accept()
+
 if __name__ == "__main__":
-    # 输入图片路径
-    input_img = r"D:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tests\photo.jpg"
-    # 输出目录
-    output_dir = r"D:\CDI\KF\ElectronicBlocks\LinuxUi\UI_Tx\tests\testdata"
-
-    # 创建输出目录
-    os.makedirs(output_dir, exist_ok=True)
-
-    # 切割 5列 × 5行
-    blocks = split_jpeg_to_blocks(input_img, x_blocks=5, y_blocks=5)
-
-    # 按编号保存
-    for block in blocks:
-        block_id = block["id"]
-        data = block["data"]
-        save_path = os.path.join(output_dir, f"{block_id}.jpeg")
-
-        with open(save_path, "wb") as f:
-            f.write(data)
-
-    print(f"✅ 切割完成！共 {len(blocks)} 块，已保存到：{output_dir}")
+    app = QApplication(sys.argv)
+    win = CameraTestWindow()
+    win.show()
+    sys.exit(app.exec_())

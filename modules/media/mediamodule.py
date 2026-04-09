@@ -70,16 +70,21 @@ class MediaModule(PicModule):
                     print("[MediaWorkTh] 摄像头打开失败，10秒后重试...")
                     time.sleep(5)
                     continue
-            if self.CamWorkState == CamState.State_Preview or \
-               self.CamWorkState == CamState.State_Recording:
-                frame = self.cam.GetRgbImg()
-                if frame is None:
-                    continue
-                qimg = self.cam.RgbImg2QImage(frame)
-                if qimg is None:
-                    continue
-                # 发送qimg流
-                self.MediaSignals.CameRefrshSignal.emit(qimg)  # 发射信号，传递数据
+            if self.CamWorkState == CamState.State_Idle:
+                continue
+            frame = self.cam.GetRgbImg()
+            if frame is None:
+                continue
+            qimg = self.cam.RgbImg2QImage(frame)
+            if qimg is None:
+                continue
+            # 发送qimg流
+            self.MediaSignals.CameRefrshSignal.emit(qimg)  # 发射信号，传递数据
+            if self.CamWorkState == CamState.State_Preview:
+                 self.PicDataBean.set_image_rgb(frame)
+            elif self.CamWorkState == CamState.State_Recording:
+                 pass
+        self.cam.closecam()  # 线程结束前确保摄像头资源被释放
             
     def MediaTxTh(self):
         # 发送媒体数据线程，持续监测发送队列并处理发送任务
@@ -244,7 +249,10 @@ class MediaModule(PicModule):
        self.CamWorkState = CamState.State_Idle
 
     def TookPhoto(self):
+        if self.CamWorkState != CamState.State_Preview:
+            return False
         self.CamWorkState = CamState.State_Idle
+        return True
 
     def StartRecordVdo(self):
         self.CamWorkState = CamState.State_Recording
