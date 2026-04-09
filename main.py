@@ -198,6 +198,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.Items_Def['WarnLabel'].setObjectName("WarnLabel")  # 设置 QLabel 的名字
         self.Items_Def['WarnLabel'].setGeometry(11, 6, 186, 50)  # 设置 QLabel 的位置和大小
         self.Items_Def['WarnLabel'].setFontSize(15)
+
+
+        # 加载图片显示到框中
         
         self.SwitHomePage(SystemState.TXT_MODE)
         self.setWindowIcon(QIcon(self.WinIconFilePath))
@@ -236,6 +239,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.MediaSignals.TransProgress.connect(self.on_media_trans_progress)
         self.MediaSignals.CameRefrshSignal.connect(self.CameRefrsh)
+        self.MediaSignals.LoadLocalPicSignal.connect(self.LocalPicRefrsh)
         self.DefSgnals.ShowWarnMsgSignal.connect(self.ShowWarnMsg)
 
 
@@ -289,18 +293,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param widget_name: 滑动的组件名（step1pic/step1vdo）
         :param slide_dir: 滑动方向（up/down）
         """
-        if widget_name == "step1pic":
+        if widget_name == "localpic":
+
             if slide_dir == "up":
-                picpath = self.media.switchLocalPic(IsUpOption=True)  # 切换到上一张图片
+                res = self.media.LoadLocalPic(IsUpOption=True)  # 切换到上一张图片
             else:
-                picpath = self.media.switchLocalPic(IsUpOption=False)  # 切换到下一张图片
-            if picpath:
-                print(f"切换到图片: {picpath}")
-                self.display_image_to_label(picpath, self.Items_txtmode['step1pic'])
-            else:
+                res = self.media.LoadLocalPic(IsUpOption=False)  # 切换到下一张图片
+
+            if not res:
                 print(f" {widget_name} 图片切换失败")
         
-        elif widget_name == "step1vdo":
+        elif widget_name == "localvdo":
             if slide_dir == "up":
                 print(f" {widget_name} 上滑 → 执行视频上滑逻辑（如音量+）")
             else:
@@ -358,7 +361,38 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(f"[CameRefrsh] exception: {e}")
             return False
-        
+    
+    def LocalPicRefrsh(self, qimage:QImage):
+        # 实现本地图片刷新逻辑
+        if qimage is None:
+            print("[LocalPicRefrsh] qimage is None")
+            return False
+        if qimage.isNull():
+            print("[LocalPicRefrsh] qimage is null")
+            return False
+        try:
+            pixmap = QPixmap.fromImage(qimage)
+            if pixmap.isNull():
+                print("[LocalPicRefrsh] pixmap is null")
+                return False
+            rounded_pixmap = self.createRoundedPixmap(pixmap, radius=20.0)
+            if rounded_pixmap.isNull():
+                print("[LocalPicRefrsh] rounded_pixmap is null")
+                return False
+            # 显示图像
+            self.Items_picmode['localpic'].setScaledContents(True)
+            self.Items_picmode['localpic'].setPixmap(
+                rounded_pixmap.scaled(
+                    self.Items_picmode['localpic'].size(),
+                    Qt.IgnoreAspectRatio,
+                    Qt.SmoothTransformation
+                )
+            )
+            return True
+        except Exception as e:
+            print(f"[LocalPicRefrsh] exception: {e}")
+            return False
+
     def ShowWarnMsg(self, Type:WarnType, msg:str)->bool:
         if self.Items_Def['WarnLabel'] is None:
             print("ShowWarnMsg warnlabel is none")
@@ -470,7 +504,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def TookPhoto(self)->bool:
         # MidModeStep1TakPto
         cur_text = self.Items_picmode['tookphoto'].text()
-        if cur_text == "拍照":
+        if cur_text == "重拍":
             res = self.media.TookPhoto()
             if res == False:
                 self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.DefWarnType_E, "正在连接摄像头")  # 发射信号，传递数据
@@ -482,8 +516,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return True
     
     def SendPhoto(self)->bool:
-        print("SendPic mid step1 send photo")
-        return True
+        
+        cur_text = self.Items_picmode['sendpic'].text()
+        if cur_text == "取消":
+            # 取消发送
+            self.media.AbortSend()
+            print("SendPic media cancled")
+            return False
+        else:
+            # 开始发送
+            mediastste = self.media.IsSending()
+            if mediastste == False:
+                print("SendPic media start sending")
+                # 查询用户选择的图片路径
+                # 发送图片
+                # self.media.Send(MediaType.Type_PIC, mediaPath=None) 
+                self.Items_picmode['sendpic'].setText("取消")
+            else:
+                print("SendPic media is busy")
+                self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.DefWarnType_E, "忙碌中，稍后重试")  # 发射信号，传递数据
+            return False
     
 #############################################################################################
 #################################### 3. 中速模式核心功能函数实现 end ###########################
@@ -515,19 +567,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 #############################################################################################
 ################################### 5. 工具类核心功能函数实现 end #############################
 #############################################################################################
-    def PicTranCtrl(self)->bool:
-        print("SendPic mid step1 turn to step2")
-        if self.SysManage.sys_state == SystemState.PIC_MODE:
-            return False
-        mediastste = self.media.IsSending()
-        if mediastste != True:
-            # 取消按钮
-            print("SendPic media cancled")
-            return False
-        else:
-            # 开始发送
-            print("SendPic media start sending")
-            return False
 
 
     '''

@@ -4,11 +4,9 @@ from pathlib import Path
 
 import cv2
 from modules.media.cammodule import CamModel
-import threading
 from threading import Thread
 from enum import Enum
 from modules.signal.DefSignal import MediaSignals
-from ui.warn import WarnType
 from PyQt5.QtCore import pyqtSignal as Signal
 import queue
 from modules.globals.systemmanage import SystemState
@@ -39,7 +37,6 @@ class MediaModule(PicModule):
 
         self.cam = CamModel()
         self.TxtDataBean = TxtDataBean()
-        self.PicDataBean = PicDataBean()
         self.VdoDataBean = VdoDataBean()
 
         self.MediaThread = None
@@ -56,10 +53,7 @@ class MediaModule(PicModule):
         # 任务队列
         self.MediaTxQueue = queue.Queue(maxsize=2)
         self.currMediaTxTask = None  # 空 = 空闲 | 有值 = 正在处理
-    ################################ 图片相关核心功能函数实现 start #############################
     
-        
-    ################################ 图片相关核心功能函数实现 end #############################
     def MediaWorkTh(self):
         # 摄像头采集线程，持续读取最新帧用于预览和录像
         while self.MediaRunning:
@@ -286,8 +280,17 @@ class MediaModule(PicModule):
             return True
         return False
     
-    def CancelSending(self) -> bool:
+    def AbortSend(self) -> bool:
         # 取消发送，停止当前正在发送的内容（文本、拍照、录像）
         self.MediaSending = False
         return True
     
+    def LoadLocalPic(self, IsUpOption: bool = True) -> bool:
+        # 切换本地图片，更新当前图片路径
+        picpath = self.switchLocalPic(IsUpOption)
+        qimg = self.LoadQImageFromPath(picpath)
+        if qimg is not None:
+            self.MediaSignals.LoadLocalPicSignal.emit(qimg)
+            return True
+        else:
+            return False

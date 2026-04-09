@@ -2,21 +2,24 @@ import cv2
 import numpy as np
 from modules.datamodule.picdatabean import PicDataBean
 from tool.globals.pathutils import PathUtils
+from PyQt5.QtGui import QImage
+import os
 
 class PicModule():
     def __init__(self, LocalPicPath):
-        self.databean = PicDataBean()
+        self.PicDataBean = PicDataBean()
         self.LocalPicPath = PathUtils.get_absolute_path(LocalPicPath)
         self.LoadLocalMsg()
 
     def LoadLocalMsg(self):
         if PathUtils.check_path_exists(self.LocalPicPath):
             print("本地图片路径有效")
-            piles = PathUtils.get_files_by_type(self.LocalPicPath, "png") 
-            print(f"本地图片列表: {piles}")
+            pic_list = PathUtils.get_files_by_type(self.LocalPicPath, "jpg") 
+            print(f"本地图片列表: {pic_list}")
+            self.PicDataBean.set_local_pic_list(pic_list)
         else:
             print(f"本地图片路径无效: {self.LocalPicPath}")
-
+            
     def switchLocalPic(self, IsUpOption: bool = True) -> str:
         """
         切换本地图片，返回完整的图片路径
@@ -24,14 +27,14 @@ class PicModule():
         :return: 完整的图片路径（str）/路径无效返回空字符串
         """
         # 1. 获取当前图片名称和目标文件名
-        curr_name = self.databean.GetCurrLocalPicName()
+        curr_name = self.PicDataBean.get_curr_local_pic_name()
         if IsUpOption:
             print(f"当前图片: {curr_name} → 切换到下一张图片")
-            new_name = self.databean.get_next_pic_name(curr_name)
+            new_name = self.PicDataBean.get_next_pic_name(curr_name)
             print(f"切换到下一张图片: {new_name}")
         else:
-            print(f"当前图片: {curr_name} → 切换到上一张图片")  
-            new_name = self.databean.get_prev_pic_name(curr_name)
+            print(f"当前图片: {curr_name} → 切换到上一张图片")
+            new_name = self.PicDataBean.get_prev_pic_name(curr_name)
             print(f"切换到上一张图片: {new_name}")
 
         # 2. 校验文件名有效性
@@ -39,14 +42,11 @@ class PicModule():
             return ""
         new_path = PathUtils.get_absolute_path(self.LocalPicPath+'/'+new_name)
         if PathUtils.check_path_exists(new_path):
-            self.databean.SetCurrLocalPicName(new_name)  # 更新当前图片名称
+            self.PicDataBean.set_curr_local_pic_name(new_name)  # 更新当前图片名称
             return new_path
         else:
             print(f"图片路径无效: {new_path}")
             return ""
-
-    def GetLocalPicPath(self) -> str:
-        return self.LocalPicPath
     
     def CutJpgImg2JpgBlocks(jpgimage_path: str, x_blocks: int, y_blocks: int):
         """
@@ -190,3 +190,23 @@ class PicModule():
                 print(f"[PasteJpegBlock2RgbImg] exception: {e}")
                 return None
                 
+    def LoadQImageFromPath(self, picpath: str) -> QImage:
+        """
+        根据本地图片路径加载 QImage
+        :param picpath: 图片完整路径
+        :return: 加载成功返回 QImage，失败返回空 QImage
+        """
+        if not picpath:
+            print("[LoadQImageFromPath] 图片路径为空")
+            return QImage()
+
+        if not os.path.exists(picpath):
+            print(f"[LoadQImageFromPath] 图片路径不存在: {picpath}")
+            return QImage()
+
+        qimg = QImage(picpath)
+        if qimg.isNull():
+            print(f"[LoadQImageFromPath] 图片加载失败或格式不支持: {picpath}")
+            return QImage()
+
+        return qimg.copy()
