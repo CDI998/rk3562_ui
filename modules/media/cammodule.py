@@ -1,6 +1,14 @@
 import cv2
 from PyQt5.QtGui import QImage
+import platform
+from enum import Enum
 
+class PlatformType(Enum):
+    UNKNOWN_TYPE = 1
+    WINDOWS_TYPE = 2
+    LINUX_TYPE   = 3
+    MACOS_TYPE   = 4
+    
 class CamModel:
     def __init__(self, device: str = "/dev/video11", width: int = 640, height: int = 480):
         self.device = device
@@ -14,12 +22,26 @@ class CamModel:
             "videoconvert ! "
             "appsink"
         )
+        self.platform = self.get_current_platform()
+
+    def get_current_platform(self) -> str:
+        system = platform.system().lower()
+        if system == "windows":
+            return PlatformType.WINDOWS_TYPE
+        if system == "linux":
+            return PlatformType.LINUX_TYPE
+        if system == "darwin":
+            return PlatformType.MACOS_TYPE
+        return PlatformType.UNKNOWN_TYPE
 
     def opencam(self) -> bool:
         # 打开前先释放之前的摄像头资源，防止 opencam 挂起
         self.closecam()
         try:
-            cap = cv2.VideoCapture(self.pipeline, cv2.CAP_GSTREAMER)
+            if self.platform == PlatformType.LINUX_TYPE:
+                cap = cv2.VideoCapture(self.pipeline, cv2.CAP_GSTREAMER)
+            else:
+                cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         except Exception:
             self.cap = None
             return False
@@ -63,7 +85,13 @@ class CamModel:
                 return None
             # 4. 颜色空间转换（BGR → RGB）
             try:
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                if self.platform == PlatformType.WINDOWS_TYPE:
+                    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                elif self.platform == PlatformType.LINUX_TYPE:
+                    rgb_frame = frame
+                else:
+                    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
             except Exception as e:
                 print(f"[摄像头] 格式转换异常: {e}")
                 return None
@@ -96,7 +124,7 @@ class CamModel:
                 h,
                 bytes_per_line,
                 QImage.Format_RGB888
-            )
+            ).copy()
             
             return qimg
         except Exception as e:

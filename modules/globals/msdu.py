@@ -2,12 +2,11 @@ from tool.globals.queuetool import *
 from modules.globals.systemmanage import SystemState
 from tool.packtool.packer import *
 from threading import Thread
-from modules.network.network import NetWorkMode
 # from PyQt5.QtCore import pyqtSignal as Signal
 import time
 from tool.packtool.packer import MsduType, MsduMode, MsduCmd, MLME_Def
 from tool.packtool.packer import MCPS_Def, MLME_Head_Def, MCPS_Head_Def
-from tool.globals.mediatool import MediaTool
+
 
 class MsduMsgDataType(Enum):
     InvalMdataType_E = 0  # 非法类型

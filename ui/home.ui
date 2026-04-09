@@ -2349,8 +2349,8 @@ border-radius: 20px; </string>
                        </property>
                        <property name="font">
                         <font>
-                         <family>Microsoft YaHei</family>
-                         <pointsize>-1</pointsize>
+                         <family>微软雅黑</family>
+                         <pointsize>18</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -2365,9 +2365,7 @@ QPushButton {
     color: #ffffff;              /* 文字颜色（白色） */
     border: none;                /* 去掉默认边框 */
     padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */
-    font-family: &quot;Microsoft YaHei&quot;;  /* 微软雅黑（英文写法，兼容所有系统） */
-    font-weight: bold;              /* 加粗 */
-    font-size: 25px;             /* 文字大小 */
+
 }
 
 QPushButton:pressed {
@@ -2407,8 +2405,8 @@ QPushButton:pressed {
                     </property>
                     <property name="font">
                      <font>
-                      <family>Microsoft YaHei</family>
-                      <pointsize>-1</pointsize>
+                      <family>微软雅黑</family>
+                      <pointsize>18</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -2423,9 +2421,6 @@ QPushButton {
     color: #ffffff;              /* 文字颜色（白色） */
     border: none;                /* 去掉默认边框 */
     padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */
-    font-family: &quot;Microsoft YaHei&quot;;  /* 微软雅黑（英文写法，兼容所有系统） */
-    font-weight: bold;              /* 加粗 */
-    font-size: 25px;             /* 文字大小 */
 }
 
 QPushButton:pressed {
@@ -3129,8 +3124,8 @@ QSlider::handle:horizontal {
                        </property>
                        <property name="font">
                         <font>
-                         <family>Microsoft YaHei</family>
-                         <pointsize>-1</pointsize>
+                         <family>微软雅黑</family>
+                         <pointsize>18</pointsize>
                          <weight>75</weight>
                          <bold>true</bold>
                         </font>
@@ -3145,9 +3140,6 @@ QPushButton {
     color: #ffffff;              /* 文字颜色（白色） */
     border: none;                /* 去掉默认边框 */
     padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */
-    font-family: &quot;Microsoft YaHei&quot;;  /* 微软雅黑（英文写法，兼容所有系统） */
-    font-weight: bold;              /* 加粗 */
-    font-size: 25px;             /* 文字大小 */
 }
 
 QPushButton:pressed {
@@ -3187,8 +3179,8 @@ QPushButton:pressed {
                     </property>
                     <property name="font">
                      <font>
-                      <family>Microsoft YaHei</family>
-                      <pointsize>-1</pointsize>
+                      <family>微软雅黑</family>
+                      <pointsize>18</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
@@ -3203,9 +3195,6 @@ QPushButton {
     color: #ffffff;              /* 文字颜色（白色） */
     border: none;                /* 去掉默认边框 */
     padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */
-    font-family: &quot;Microsoft YaHei&quot;;  /* 微软雅黑（英文写法，兼容所有系统） */
-    font-weight: bold;              /* 加粗 */
-    font-size: 25px;             /* 文字大小 */
 }
 
 QPushButton:pressed {

@@ -1172,8 +1172,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tookphoto.sizePolicy().hasHeightForWidth())
         self.tookphoto.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(-1)
+        font.setFamily("微软雅黑")
+        font.setPointSize(18)
         font.setBold(True)
         font.setWeight(75)
         self.tookphoto.setFont(font)
@@ -1186,9 +1186,7 @@ class Ui_MainWindow(object):
 "    color: #ffffff;              /* 文字颜色（白色） */\n"
 "    border: none;                /* 去掉默认边框 */\n"
 "    padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */\n"
-"    font-family: \"Microsoft YaHei\";  /* 微软雅黑（英文写法，兼容所有系统） */\n"
-"    font-weight: bold;              /* 加粗 */\n"
-"    font-size: 25px;             /* 文字大小 */\n"
+"\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
@@ -1208,8 +1206,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.sendpic.sizePolicy().hasHeightForWidth())
         self.sendpic.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(-1)
+        font.setFamily("微软雅黑")
+        font.setPointSize(18)
         font.setBold(True)
         font.setWeight(75)
         self.sendpic.setFont(font)
@@ -1222,9 +1220,6 @@ class Ui_MainWindow(object):
 "    color: #ffffff;              /* 文字颜色（白色） */\n"
 "    border: none;                /* 去掉默认边框 */\n"
 "    padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */\n"
-"    font-family: \"Microsoft YaHei\";  /* 微软雅黑（英文写法，兼容所有系统） */\n"
-"    font-weight: bold;              /* 加粗 */\n"
-"    font-size: 25px;             /* 文字大小 */\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
@@ -1547,8 +1542,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.record.sizePolicy().hasHeightForWidth())
         self.record.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(-1)
+        font.setFamily("微软雅黑")
+        font.setPointSize(18)
         font.setBold(True)
         font.setWeight(75)
         self.record.setFont(font)
@@ -1561,9 +1556,6 @@ class Ui_MainWindow(object):
 "    color: #ffffff;              /* 文字颜色（白色） */\n"
 "    border: none;                /* 去掉默认边框 */\n"
 "    padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */\n"
-"    font-family: \"Microsoft YaHei\";  /* 微软雅黑（英文写法，兼容所有系统） */\n"
-"    font-weight: bold;              /* 加粗 */\n"
-"    font-size: 25px;             /* 文字大小 */\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
@@ -1583,8 +1575,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.sendvdo.sizePolicy().hasHeightForWidth())
         self.sendvdo.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(-1)
+        font.setFamily("微软雅黑")
+        font.setPointSize(18)
         font.setBold(True)
         font.setWeight(75)
         self.sendvdo.setFont(font)
@@ -1597,9 +1589,6 @@ class Ui_MainWindow(object):
 "    color: #ffffff;              /* 文字颜色（白色） */\n"
 "    border: none;                /* 去掉默认边框 */\n"
 "    padding: 6px 6px;           /* 内边距（上下6px，左右16px），避免文字贴边 */\n"
-"    font-family: \"Microsoft YaHei\";  /* 微软雅黑（英文写法，兼容所有系统） */\n"
-"    font-weight: bold;              /* 加粗 */\n"
-"    font-size: 25px;             /* 文字大小 */\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"

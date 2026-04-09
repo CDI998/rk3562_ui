@@ -53,10 +53,32 @@ import numpy as np
 from ui.progress import Progress
 from modules.signal.DefSignal import MediaType
 
+# def handle_exception(exc_type, exc_value, exc_traceback):
+#     # 全局异常处理程序，将异常写入日志文件
+#     print("Unhandled exception:", file=sys.stderr)
+#     sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+import sys
+import threading
+import traceback
+import faulthandler
+
+# 捕获底层崩溃（如扩展库、段错误等）
+faulthandler.enable()
+
+# 捕获主线程未处理异常
 def handle_exception(exc_type, exc_value, exc_traceback):
-    # 全局异常处理程序，将异常写入日志文件
-    print("Unhandled exception:", file=sys.stderr)
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+    print("程序发生未捕获异常：")
+    traceback.print_exception(exc_type, exc_value, exc_traceback)
+
+# 捕获子线程未处理异常
+def thread_exception_handler(args):
+    print(f"线程 {args.thread.name} 发生未捕获异常：")
+    traceback.print_exception(args.exc_type, args.exc_value, args.exc_traceback)
+
+sys.excepthook = handle_exception
+threading.excepthook = thread_exception_handler
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, WinIconFilePath:str, WinTitle:str):
@@ -425,7 +447,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # 拍照失败
             self.DefSgnals.ShowWarnMsgSignal.emit(WarnType.ErrorWarnType_E, "未连接摄像头")  # 发射信号，传递数据
         return True
-    
     
 #############################################################################################
 #################################### 3. 中速模式核心功能函数实现 end ###########################

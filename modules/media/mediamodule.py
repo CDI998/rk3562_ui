@@ -37,7 +37,7 @@ class MediaModule(PicModule):
         self.localpicpath = localpicpath
         self.localvdopath = localvdopath
 
-        self.cam = CamModel(device=1, width=640, height=480)
+        self.cam = CamModel()
         self.TxtDataBean = TxtDataBean()
         self.PicDataBean = PicDataBean()
         self.VdoDataBean = VdoDataBean()

@@ -1,6 +1,5 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QDialog, QVBoxLayout, QLabel, QComboBox, QFormLayout, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
-from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve
+from PyQt5.QtWidgets import QPushButton, QDialog, QVBoxLayout, QLabel, QComboBox, QFormLayout, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent
 import re
 from tool.globals.font import *
